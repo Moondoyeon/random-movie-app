@@ -67,7 +67,7 @@ const Machine = ({ getSlotContent, halted, setHalted }) => {
       setFisrtOptionNum(changeSlotNum1(slot1));
       setSecondOptionNum(changeSlotNum2(slot2));
       setThirdOptionNum(changeSlotNum1(slot3));
-    }, 1000);
+    }, 500);
     // console.log("slot start");
     return () => {
       clearInterval(timeInterval.current);
