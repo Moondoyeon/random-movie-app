@@ -26,12 +26,12 @@ const Search = () => {
 };
 export default Search;
 const Container = styled.div`
+  height: 90vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   background-color: white;
   width: 100%;
-  min-height: 100vh;
   padding: 20px;
   .noResult {
     margin: 50px;

@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { useState } from 'react';
 import axios from 'axios';
 import { slotCountry, slotYear, slotType } from '../constants';
-import Loading from '../components/Loading';
+// import Loading from '../components/Loading';
 import { useEffect } from 'react';
 // 컴포넌트
 const Random = () => {
@@ -75,7 +75,7 @@ const Random = () => {
     setHalted(false);
   };
   // 최초 렌더링시 실행 x
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true);
   // useDidMountEffect(async () => {
   //   setIsLoading(true);
   //   if (state.country) {
@@ -103,7 +103,7 @@ const Random = () => {
         const year = KobisResult.openDt.slice(0, 4);
         const NaverResult = await getMovieFromNaver(KobisResult.movieNm, year);
         NaverResult ? setNaverInfo(NaverResult) : setNaverInfo([]);
-        setIsLoading(false);
+        // setIsLoading(false);
         setTicketModal(true);
         setState({
           country: '',
@@ -116,32 +116,39 @@ const Random = () => {
     }
   };
   useEffect(() => {
-    setIsLoading(true);
+    // setIsLoading(true);
     getMovie();
-  }, [state.country, isLoading, state]);
+  }, [state.country, state]);
 
   return (
     <Container>
-      <Machine
-        setTicketModal={setTicketModal}
-        getSlotContent={getSlotContent}
-        halted={halted}
-        setHalted={setHalted}
-      />
-      {isLoading && <Loading />}
-      {ticketModal ? (
-        <>
-          <RandomResult setTicketModal={setTicketModal} kobisInfo={kobisInfo} naverInfo={naverInfo} />
-        </>
-      ) : null}
-      <ReStart onClick={handleRestartSlot}>START</ReStart>
+      <Wrapper>
+        <Machine
+          setTicketModal={setTicketModal}
+          getSlotContent={getSlotContent}
+          halted={halted}
+          setHalted={setHalted}
+        />
+        {/* {isLoading && <Loading />} */}
+        {ticketModal ? (
+          <>
+            <RandomResult setTicketModal={setTicketModal} kobisInfo={kobisInfo} naverInfo={naverInfo} />
+          </>
+        ) : null}
+        <ReStart onClick={handleRestartSlot}>START</ReStart>
+      </Wrapper>
     </Container>
   );
 };
 export default Random;
 const Container = styled.div`
-  margin-top: 150px;
+  /* margin-top: 150px; */
+  min-height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
+const Wrapper = styled.div``;
 const ReStart = styled.div`
   font-family: 'Press Start 2P', cursive;
 
