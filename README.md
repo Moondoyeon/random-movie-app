@@ -34,3 +34,9 @@
 ### 영화검색
 
 ![searchMovie](https://user-images.githubusercontent.com/102936206/199431227-96cd0e36-0959-4eac-91f5-4a87c5d0bdb9.gif)
+
+## 💻 프로젝트 실행
+```
+npm install
+npm start
+```
