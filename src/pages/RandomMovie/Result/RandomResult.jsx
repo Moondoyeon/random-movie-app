@@ -1,51 +1,68 @@
 import styled from 'styled-components';
-import { ReactComponent as Barcode } from '../assets/barcode.svg';
-import { ReactComponent as Star } from '../assets/star.svg';
-import { ReactComponent as Close } from '../assets/close.svg';
-import { ReactComponent as NoImage } from '../assets/noImage.svg';
+import { flexBox } from '../../../styles/mixins';
+import { ReactComponent as Barcode } from '../../../assets/barcode.svg';
+import { ReactComponent as Star } from '../../../assets/star.svg';
+import { ReactComponent as Close } from '../../../assets/close.svg';
+import { ReactComponent as NoImage } from '../../../assets/noImage.svg';
 const RandomResult = ({ setTicketModal, kobisInfo, naverInfo }) => {
   console.log(kobisInfo);
   console.log(naverInfo);
+  console.log(naverInfo.length);
   const closeModal = () => {
     setTicketModal(false);
   };
+
   const audience = parseInt(kobisInfo.audiAcc).toLocaleString();
   const salesAmt = parseInt(kobisInfo.salesAmt).toLocaleString();
   const barcodeNumber = Math.floor(Math.random() * 100000000);
   let subtitle = '';
   if (naverInfo.length !== 0) {
-    subtitle = naverInfo.subtitle.replace(/<b>/gi, '').replace(/<\/b>/gi, '');
-  } else return;
+    subtitle = naverInfo.subtitle
+      .replace(/<b>/gi, '')
+      .replace(/<\/b>/gi, '')
+      .replace(/&apos;/gi, '');
+  }
+
   return (
-    <ModalBack onClick={closeModal}>
+    <ModalBack>
       <Top>
         <CloseSVG onClick={closeModal} />
       </Top>
       <Container>
         <Bottom>
           <BottomLeft>
-            <StarWrapper>
-              <StarSVG />
-              <StarSVG />
-              <StarSVG />
-              <StarSVG />
-              <StarSVG />
-            </StarWrapper>
-            <Title>CINEMA TICKET</Title>
+            <TicketTop>
+              <StarWrapper>
+                <StarSVG />
+                <StarSVG />
+                <StarSVG />
+                <StarSVG />
+                <StarSVG />
+              </StarWrapper>
+              <TicketTitle>CINEMA TICKET</TicketTitle>
+            </TicketTop>
             <Content>
-              {naverInfo.length === 0 ? <NoImageSVG /> : <img src={naverInfo.image} alt={naverInfo.title} />}
+              <div>
+                {naverInfo.length === 0 ? (
+                  <NoImageSVG />
+                ) : (
+                  <img src={naverInfo.image} alt={naverInfo.title} />
+                )}
+              </div>
               <Info>
                 <h3 className="movie-title">{kobisInfo.movieNm}</h3>
                 <p className="movie-subtitle">{subtitle}</p>
                 <div>개봉일 {kobisInfo.openDt}</div>
-                <div>
-                  평점 <StarSVG className="ratingStar" />
-                  {naverInfo.length === 0 ? '0.00' : naverInfo.userRating}
-                </div>
+                {naverInfo.length === 0 || naverInfo.userRating === '0.00' ? null : (
+                  <UserRating>
+                    평점 <StarSVG className="ratingStar" />
+                    {naverInfo.userRating}
+                  </UserRating>
+                )}
                 <div>누적관객 {audience}명</div>
                 <div>누적매출액 {salesAmt}원</div>
                 {naverInfo.length === 0 ? null : (
-                  <a href={naverInfo.link}>
+                  <a href={naverInfo.link} target="_blank" rel="noopener noreferrer">
                     <span>더보기</span>
                   </a>
                 )}
@@ -68,6 +85,7 @@ const BarcodeSVG = styled(Barcode)`
 `;
 const StarSVG = styled(Star)`
   width: 15px;
+  margin: 0 3px;
 `;
 const CloseSVG = styled(Close)`
   position: relative;
@@ -79,7 +97,7 @@ const NoImageSVG = styled(NoImage)`
   height: 160px;
   border-radius: 5px;
 `;
-const StarWrapper = styled.div``;
+
 const ModalBack = styled.div`
   display: flex;
   flex-direction: column;
@@ -96,73 +114,87 @@ const ModalBack = styled.div`
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  position: relative;
   height: 340px;
-  width: 600px;
+  min-width: 600px;
+  max-width: 640px;
   background-color: #1a2936;
 `;
 const Top = styled.div``;
 const Bottom = styled.div`
   display: flex;
-  align-items: center;
   color: #f5efd7;
   font-weight: 600;
   font-size: 18px;
+`;
+const BottomLeft = styled.div`
+  width: 90%;
+  border: 5px solid #f5efd7;
+  border-radius: 10px;
+  margin: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
   a {
     color: #f5efd7;
   }
 `;
-const BottomLeft = styled.div`
-  width: 80%;
-  border: 5px solid #f5efd7;
-  border-radius: 10px;
-  margin: 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  height: 320px;
-  justify-content: center;
+const TicketTop = styled.div`
+  height: 30%;
+  padding: 8px;
 `;
-
-const Title = styled.div`
-  color: #e23830;
-  font-size: 28px;
-  font-weight: 700;
+const StarWrapper = styled.div`
   text-align: center;
-  width: 245px;
+  height: 20px;
+`;
+const TicketTitle = styled.div`
+  color: ${({ theme }) => theme.mediumWineColor};
+  font-size: 26px;
+  font-weight: 800;
+  text-align: center;
   border-bottom: 3px solid #f5efd7;
-  margin-bottom: 10px;
 `;
 const Content = styled.div`
-  display: flex;
-  font-size: 15px;
-  width: 85%;
-  margin-bottom: 15px;
-  justify-content: space-around;
+  ${flexBox('row', '', '')};
+  height: 70%;
+  font-size: 14px;
+  padding-left: 25px;
+  padding-right: 20px;
+  img {
+    height: 160px;
+    width: 110px;
+  }
   .movie-title {
-    font-size: 22px;
+    font-size: 18px;
   }
   .movie-subtitle {
-    margin-bottom: 20px;
+    margin-bottom: 16px;
   }
 `;
+
 const Info = styled.div`
-  margin-left: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  height: 80%;
+  margin-left: 20px;
   .ratingStar {
     color: #e23830;
-    height: 13px;
-    padding-top: 2px;
   }
+`;
+const UserRating = styled.div`
+  display: flex;
+  align-items: center;
 `;
 const BottomRight = styled.div`
   background-color: #f5efd7;
   width: 20%;
   height: 340px;
+
   padding-top: 0;
   padding-bottom: 0;
   padding-left: 10px;
-  padding-right: 30px;
+  padding-right: 25px;
 `;
 const Number = styled.div`
   position: relative;

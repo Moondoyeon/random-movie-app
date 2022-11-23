@@ -1,19 +1,20 @@
-import React, { useContext } from 'react';
 import { useLocation } from 'react-router-dom';
-import SearchResult from '../components/SearchResult';
-import { SearchListContext } from '../context/context';
+import { useSearchMovies } from '../../context/searchMoviesContext';
 import styled from 'styled-components';
+import SearchResult from './SearchResult';
+
 const Search = () => {
   const location = useLocation();
   const keyword = location.state.keyword;
-  const { searchList } = useContext(SearchListContext);
+  const { searchList } = useSearchMovies();
+
   return (
     <Container>
       <TitleWrapper>
         <span>'{keyword}' 검색결과</span>
       </TitleWrapper>
       {searchList.length === 0 ? (
-        <div className="noResult">죄송합니다. 검색결과를 찾을 수 없습니다 ㅜ_ㅜ</div>
+        <div className="noResult">죄송합니다. 검색결과를 찾을 수 없습니다.</div>
       ) : (
         <ListContainer>
           {searchList.map((el, idx) => (

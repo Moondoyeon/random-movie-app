@@ -1,31 +1,31 @@
-import styled from "styled-components";
-import { ReactComponent as Magnify } from "../assets/magnify.svg";
-import axios from "axios";
-import { useContext } from "react";
-import { SearchListContext } from "../context/context";
-import { useNavigate } from "react-router-dom";
+import styled from 'styled-components';
+import { ReactComponent as Magnify } from '../../assets/magnify.svg';
+import axios from 'axios';
+
+import { useSearchMovies } from '../../context/searchMoviesContext';
+import { useNavigate } from 'react-router-dom';
 const SearchBar = ({ setKeyword, keyword }) => {
-  const { setSearchList } = useContext(SearchListContext);
+  const { setSearchList } = useSearchMovies();
   const navigate = useNavigate();
   const getProcessedList = (arr) => {
     let newList = arr.slice();
-    newList = newList.filter((el) => el.userRating !== "0.00");
+    newList = newList.filter((el) => el.userRating !== '0.00');
     return newList;
   };
   const getMovie = async () => {
-    if (keyword === "") {
+    if (keyword === '') {
       setSearchList([]);
     }
     try {
       const result = await axios.get(`api/v1/search/movie.json?query=${keyword}&display=12`, {
         headers: {
-          "X-Naver-Client-Id": process.env.REACT_APP_NAVER_ID_KEY,
-          "X-Naver-Client-Secret": process.env.REACT_APP_NAVER_SECRET_KEY,
+          'X-Naver-Client-Id': process.env.REACT_APP_NAVER_ID_KEY,
+          'X-Naver-Client-Secret': process.env.REACT_APP_NAVER_SECRET_KEY,
         },
       });
       const processedData = getProcessedList(result.data.items);
       setSearchList(processedData);
-      navigate("/search", {
+      navigate('/search', {
         state: {
           keyword: keyword,
         },
@@ -33,7 +33,7 @@ const SearchBar = ({ setKeyword, keyword }) => {
     } catch (err) {
       console.log(err);
     }
-    setKeyword("");
+    setKeyword('');
   };
 
   const handleKeywordChange = (e) => {
@@ -41,7 +41,7 @@ const SearchBar = ({ setKeyword, keyword }) => {
   };
 
   const handleKeywordOnKeyUp = (e) => {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       getMovie();
     }
   };
@@ -71,6 +71,7 @@ const CustomInput = styled.input`
   margin-bottom: 5px;
   border-radius: 20px;
   border: none;
+  outline: none;
   &::placeholder {
     color: white;
     font-style: italic;

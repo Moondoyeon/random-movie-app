@@ -1,20 +1,14 @@
-import React from "react";
-import styled from "styled-components";
-import { ReactComponent as NoImage } from "../assets/noImage.svg";
+import React from 'react';
+import styled from 'styled-components';
+import { ReactComponent as NoImage } from '../../assets/noImage.svg';
 const SearchResult = ({ data }) => {
-  const year = data.pubDate !== "" ? `(${data.pubDate})` : null;
-  const title = data.title.replace(/<b>/gi, "").replace(/<\/b>/gi, "");
-  const director = data.director.replace(/[^\w\sㄱ-힣]$/, "");
-  const actor = data.actor.replace(/[^\w\sㄱ-힣]$/, "");
+  const year = data.pubDate !== '' ? `(${data.pubDate})` : null;
+  const title = data.title.replace(/<b>/gi, '').replace(/<\/b>/gi, '');
+  const director = data.director.replace(/[^\w\sㄱ-힣]$/, '');
+  const actor = data.actor.replace(/[^\w\sㄱ-힣]$/, '');
   return (
     <ItemContainer>
-      <ImgWrapper>
-        {data.image === "" ? (
-          <NoImageSVG />
-        ) : (
-          <img src={data.image} alt={title} />
-        )}
-      </ImgWrapper>
+      <ImgWrapper>{data.image === '' ? <NoImageSVG /> : <img src={data.image} alt={title} />}</ImgWrapper>
       <ContentWrapper>
         <Row>
           <div className="data title">

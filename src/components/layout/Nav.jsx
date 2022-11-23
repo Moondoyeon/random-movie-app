@@ -1,8 +1,8 @@
-import SearchBar from './SearchBar';
 import styled from 'styled-components';
-import { ReactComponent as Logo } from '../assets/logo.svg';
+import { ReactComponent as Logo } from '../../assets/logo.svg';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
+import SearchBar from '../../pages/SearchMovie/SearchBar';
 const Container = styled.header`
   display: flex;
   width: 100vw;

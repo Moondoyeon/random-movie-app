@@ -9,7 +9,7 @@ import {
   BuzzerBtnContainer,
 } from './style';
 import { useEffect, useState, useRef } from 'react';
-import { slotCountry, slotYear, slotType } from '../../constants';
+import { slotCountry, slotYear, slotType } from '../../../constants';
 
 // 슬롯머신 초기 숫자값
 const getRandomNumber1 = () => {

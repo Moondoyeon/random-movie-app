@@ -1,14 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import Machine from '../components/RandomMachine/Machine';
-import RandomResult from '../components/RandomResult';
-// import useDidMountEffect from '../utils/useDidmountEffect';
+import Machine from './Machine/Machine';
+
 import styled from 'styled-components';
 import { useState } from 'react';
 import axios from 'axios';
-import { slotCountry, slotYear, slotType } from '../constants';
-// import Loading from '../components/Loading';
+import { slotCountry, slotYear, slotType } from '../../constants';
 import { useEffect } from 'react';
-// 컴포넌트
+import { useAlertModal } from '../../context/alertModalContext';
+import Loading from '../../components/Loading/Loading';
+import RandomResult from './Result/RandomResult';
+import { flexBox, positionCenter } from '../../styles/mixins';
 const Random = () => {
   const [state, setState] = useState({
     country: '',
@@ -32,8 +33,8 @@ const Random = () => {
       year: processedYear,
     });
   };
-
-  // 랜덤 영화 한개 뽑기 from kobis | 분명히 국내/외국 보내는데 구분없이 일별박스오피스응답이 오는것같다.
+  const { show } = useAlertModal();
+  // 랜덤 영화 한개 뽑기 from kobis
   const getRandomMovieFromKobis = async () => {
     try {
       const result = await axios.get(
@@ -41,7 +42,7 @@ const Random = () => {
       );
       console.log(result.data.boxOfficeResult.dailyBoxOfficeList);
       if (result.data.boxOfficeResult.dailyBoxOfficeList.length === 0) {
-        alert('랜덤 영화를 뽑지 못했습니다 ㅜ_ㅜ 다시 시도해주세요!');
+        show('랜덤영화를 뽑지 못했습니다. 다시 뽑아주세요!');
         return;
       } else {
         setKobisInfo(result.data.boxOfficeResult.dailyBoxOfficeList[0]);
@@ -49,13 +50,12 @@ const Random = () => {
       }
     } catch (err) {
       console.log(err, 'kobis random error');
-      alert('죄송합니다. 잠시 후 다시 시도해주세요 ㅜ_ㅜ');
+      show('죄송합니다. 잠시 후 다시 시도해주세요');
     }
   };
   // 뽑은 영화 상세정보요청 from 네이버
   const getMovieFromNaver = async (movie, year) => {
     let title = movie.replace(/<b>/gi, '').replace(/<\/b>/gi, '');
-    // const processedTitle = title.slice(0, 5);
     console.log(title);
     try {
       const result = await axios.get(`/v1/search/movie.json?query=${title}&yearfrom=${year}&yearto=${year}`, {
@@ -66,36 +66,14 @@ const Random = () => {
       });
       return result.data.items[0];
     } catch (err) {
-      console.log(err, 'naver random error');
-      alert('죄송합니다. 잠시 후 다시 시도해주세요 ㅜ_ㅜ');
+      show('죄송합니다. 잠시 후 다시 시도해주세요');
     }
   };
   // start 버튼
   const handleRestartSlot = () => {
     setHalted(false);
   };
-  // 최초 렌더링시 실행 x
-  // const [isLoading, setIsLoading] = useState(true);
-  // useDidMountEffect(async () => {
-  //   setIsLoading(true);
-  //   if (state.country) {
-  //     const KobisResult = await getRandomMovieFromKobis();
-  //     if (KobisResult) {
-  //       const year = KobisResult.openDt.slice(0, 4);
-  //       const NaverResult = await getMovieFromNaver(KobisResult.movieNm, year);
-  //       NaverResult ? setNaverInfo(NaverResult) : setNaverInfo([]);
-  //       setIsLoading(false);
-  //       setTicketModal(true);
-  //       setState({
-  //         country: '',
-  //         type: '',
-  //         year: '',
-  //       });
-  //     }
-  //   } else {
-  //     return;
-  //   }
-  // }, [state.country, state, setNaverInfo]);
+  const [isLoading, setIsLoading] = useState(true);
   const getMovie = async () => {
     if (state.country) {
       const KobisResult = await getRandomMovieFromKobis();
@@ -103,8 +81,6 @@ const Random = () => {
         const year = KobisResult.openDt.slice(0, 4);
         const NaverResult = await getMovieFromNaver(KobisResult.movieNm, year);
         NaverResult ? setNaverInfo(NaverResult) : setNaverInfo([]);
-        // setIsLoading(false);
-        setTicketModal(true);
         setState({
           country: '',
           type: '',
@@ -116,33 +92,46 @@ const Random = () => {
     }
   };
   useEffect(() => {
-    // setIsLoading(true);
     getMovie();
+    setIsLoading(true);
+    setTimeout(() => {
+      setTicketModal(true);
+      setIsLoading(false);
+    }, 1000);
   }, [state.country, state]);
 
   return (
     <Container>
       <Wrapper>
+        {isLoading && (
+          <LoadingContainer>
+            <Loading />
+          </LoadingContainer>
+        )}
         <Machine
           setTicketModal={setTicketModal}
           getSlotContent={getSlotContent}
           halted={halted}
           setHalted={setHalted}
         />
-        {/* {isLoading && <Loading />} */}
-        {ticketModal ? (
-          <>
-            <RandomResult setTicketModal={setTicketModal} kobisInfo={kobisInfo} naverInfo={naverInfo} />
-          </>
-        ) : null}
+        {ticketModal && (
+          <RandomResult setTicketModal={setTicketModal} kobisInfo={kobisInfo} naverInfo={naverInfo} />
+        )}
         <ReStart onClick={handleRestartSlot}>START</ReStart>
       </Wrapper>
     </Container>
   );
 };
 export default Random;
+const LoadingContainer = styled.div`
+  top: 5px;
+  ${flexBox()};
+  ${positionCenter()};
+  background-color: ${({ theme }) => theme.grayBrownColor};
+  height: 340px;
+  width: 600px;
+`;
 const Container = styled.div`
-  /* margin-top: 150px; */
   min-height: 80vh;
   display: flex;
   justify-content: center;
@@ -151,7 +140,6 @@ const Container = styled.div`
 const Wrapper = styled.div``;
 const ReStart = styled.div`
   font-family: 'Press Start 2P', cursive;
-
   font-size: 40px;
   cursor: pointer;
   position: relative;
@@ -159,7 +147,7 @@ const ReStart = styled.div`
   bottom: 260px;
   font-weight: 600;
   width: 150px;
-  @keyframes blink-effect {
+  /* @keyframes blink-effect {
     50% {
       opacity: 0;
     }
@@ -169,5 +157,5 @@ const ReStart = styled.div`
   }
   &:hover {
     color: violet;
-  }
+  } */
 `;

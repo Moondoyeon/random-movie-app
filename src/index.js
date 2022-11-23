@@ -1,15 +1,19 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import "./index.css";
-import App from "./App";
+import React from 'react';
+import ReactDOM from 'react-dom/client';
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
+import App from './App';
+import { AlertModalProvider } from './context/alertModalContext';
+import { ThemeProvider } from 'styled-components';
+import { colors } from './styles/theme';
+import SearchListProvider from './context/searchMoviesContext';
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+  <SearchListProvider>
+    <ThemeProvider theme={colors}>
+      <AlertModalProvider>
+        <App />
+      </AlertModalProvider>
+    </ThemeProvider>
+  </SearchListProvider>,
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
