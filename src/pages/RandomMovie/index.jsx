@@ -1,15 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import Machine from './Machine/Machine';
+import { useState, useEffect } from 'react';
 
-import styled from 'styled-components';
-import { useState } from 'react';
 import axios from 'axios';
+import styled from 'styled-components';
+import { flexBox, positionCenter } from '../../styles/mixins';
 import { slotCountry, slotYear, slotType } from '../../constants';
-import { useEffect } from 'react';
 import { useAlertModal } from '../../context/alertModalContext';
+import Machine from './Machine/Machine';
 import Loading from '../../components/Loading/Loading';
 import RandomResult from './Result/RandomResult';
-import { flexBox, positionCenter } from '../../styles/mixins';
+
 const Random = () => {
   const [state, setState] = useState({
     country: '',
@@ -43,6 +43,7 @@ const Random = () => {
       console.log(result.data.boxOfficeResult.dailyBoxOfficeList);
       if (result.data.boxOfficeResult.dailyBoxOfficeList.length === 0) {
         show('랜덤영화를 뽑지 못했습니다. 다시 뽑아주세요!');
+
         return;
       } else {
         setKobisInfo(result.data.boxOfficeResult.dailyBoxOfficeList[0]);
@@ -91,13 +92,14 @@ const Random = () => {
       return;
     }
   };
+
   useEffect(() => {
     getMovie();
     setIsLoading(true);
     setTimeout(() => {
       setTicketModal(true);
       setIsLoading(false);
-    }, 1000);
+    }, 900);
   }, [state.country, state]);
 
   return (
