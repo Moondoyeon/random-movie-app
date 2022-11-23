@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 import axios from 'axios';
 import styled from 'styled-components';
@@ -9,6 +9,7 @@ import { useAlertModal } from '../../context/alertModalContext';
 import Machine from './Machine/Machine';
 import Loading from '../../components/Loading/Loading';
 import RandomResult from './Result/RandomResult';
+import useDidmountEffect from '../../hooks/useDidmountEffect';
 
 const Random = () => {
   const [state, setState] = useState({
@@ -43,7 +44,6 @@ const Random = () => {
       console.log(result.data.boxOfficeResult.dailyBoxOfficeList);
       if (result.data.boxOfficeResult.dailyBoxOfficeList.length === 0) {
         show('랜덤영화를 뽑지 못했습니다. 다시 뽑아주세요!');
-
         return;
       } else {
         setKobisInfo(result.data.boxOfficeResult.dailyBoxOfficeList[0]);
@@ -74,7 +74,7 @@ const Random = () => {
   const handleRestartSlot = () => {
     setHalted(false);
   };
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const getMovie = async () => {
     if (state.country) {
       const KobisResult = await getRandomMovieFromKobis();
@@ -93,14 +93,14 @@ const Random = () => {
     }
   };
 
-  useEffect(() => {
+  useDidmountEffect(() => {
     getMovie();
     setIsLoading(true);
     setTimeout(() => {
       setTicketModal(true);
       setIsLoading(false);
     }, 900);
-  }, [state.country, state]);
+  }, [state]);
 
   return (
     <Container>
